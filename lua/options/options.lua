@@ -8,7 +8,7 @@ vim.opt.splitbelow = true
 vim.opt.splitright = true
 
 vim.expandtab = true
-vim.tabstop = 4
+vim.tabstop = 2
 vim.opt.shiftwidth = 4
 
 vim.opt.wrap = false
@@ -87,3 +87,4 @@ require("nvim-tree").setup({
 
 local api = require "nvim-tree.api"
 vim.keymap.set('n', '<leader>q', api.tree.toggle)
+

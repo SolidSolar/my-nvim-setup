@@ -15,7 +15,11 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Sevim.cmd.colorscheme("deepwhite")
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
+
+-- Sevim.cmd.cclorscheme("deepwhite")
 --tup lazy.nvim
 require("lazy").setup({
   {
@@ -125,32 +129,77 @@ opts = {
   {
 	"nvim-tree/nvim-web-devicons"
   },
-{
-  'stevearc/oil.nvim',
-  ---@module 'oil'
-  ---@type oil.SetupOpts
-  opts = {},
-  -- Optional dependencies
-  dependencies = { { "echasnovski/mini.icons", opts = {} } },
-  -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
-}
+  {
+	"neovim/nvim-lspconfig"
+  },
+  {
+    "seblyng/roslyn.nvim",
+    ft = "cs",
+    ---@module 'roslyn.config'
+    ---@type RoslynNvimConfig
+    opts = {
+	config = 
+	{
+		capabilities = capabilities,
+	},
+        -- your configuration comes here; leave empty for default settings
+    },
+  },
+  {
+    "mason-org/mason.nvim",
+    opts = {}
+  },
+  {
+    "apyra/nvim-unity-sync",
+    config = function()
+      require("unity.plugin").setup({
+        -- Configs here (Optional) 
+        })
+    end,
+    ft = "cs",
+  }
 })
+require("mason").setup({
+    registries = {
+        "github:mason-org/mason-registry",
+        "github:Crashdummyy/mason-registry",
+    },
+})
+
+vim.lsp.config("roslyn", {
+    on_attach = function()
+        print("This will run when the server attaches!")
+    end,
+    settings = {
+        ["csharp|inlay_hints"] = {
+            csharp_enable_inlay_hints_for_implicit_object_creation = true,
+            csharp_enable_inlay_hints_for_implicit_variable_types = true,
+        },
+        ["csharp|code_lens"] = {
+            dotnet_enable_references_code_lens = true,
+        },
+		["background_analysis"] ={
+			dotnet_analyzer_diagnostics_scope = "fullSolution",
+			dotnet_compiler_diagnostics_scope = "fullSolution",
+		}
+    },
+	opts={
+		filewatching = "roslyn"
+	}
+})
+
 vim.api.nvim_create_autocmd("BufEnter", {
     callback = function()
-        vim.lsp.start({
-	    name = 'tslsp',
-	    cmd = {'typescript-language-server', '--stdio'},
-	    root_dir = vim.fs.dirname(vim.fs.find({'tsconfig.json', 'package.json'}, { upward = true })[1]),
-	})
+        --vim.lsp.start({
+        --    name = 'tslsp',
+        --    cmd = {'typescript-language-server', '--stdio'},
+        --    root_dir = vim.fs.dirname(vim.fs.find({'tsconfig.json', 'package.json'}, { upward = true })[1]),
+        --})
 	vim.keymap.set("n", "<leader>r", function ()
 	    vim.lsp.buf.rename()
 	end)
-	vim.keymap.set("n", "<leader>f", function ()
+	vim.keymap.set("n", "<leader>d", function ()
             vim.lsp.buf.definition()
 	end)
 
-	vim.keymap.set("n", "<leader>g", function ()
-            vim.lsp.buf.definition()
-	end)
 end,})
-require("oil").setup()
