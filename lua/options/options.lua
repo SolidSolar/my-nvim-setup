@@ -34,7 +34,9 @@ vim.g.mapleader = " "
 
 -- remaps
 --vim.keymap.set("n", "<leader>q", "<CMD>Oil --float<CR>", {desc = "Open parent directory"})
---vim.keymap.set("n", "<c-space>", "<Esc>", {remap = false})
+vim.keymap.set("n", "<leader>q", "<Esc>", {remap = false})
+vim.keymap.set("n", "<leader><Left>", "<C-o>", {remap = true})
+vim.keymap.set("n", "<leader><Right>", "<C-i>", {remap = true})
 
 local cmp = require'cmp'
 
@@ -86,5 +88,5 @@ require("nvim-tree").setup({
 
 
 local api = require "nvim-tree.api"
-vim.keymap.set('n', '<leader>q', api.tree.toggle)
+vim.keymap.set('n', '<leader>t', api.tree.toggle)
 
