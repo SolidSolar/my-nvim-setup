@@ -16,23 +16,28 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
+--local capabilities = vim.lsp.protocol.make_client_capabilities()
+--capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
 
 -- Sevim.cmd.cclorscheme("deepwhite")
 --tup lazy.nvim
 require("lazy").setup({
-  {
+ {
       "Verf/deepwhite.nvim",
       config = function()
 	vim.cmd.colorscheme("deepwhite")
  
       end,
-      --opts = {
-      --	vim.cmd.colorscheme("deepwhite")
-      --}
-      -- add your plugins here
-  },
+	},
+--{
+--  "folke/tokyonight.nvim",
+--  lazy = false,
+--  priority = 1000,
+--  opts = {},
+--  config = function()
+--  vim.cmd.colorscheme("tokyonight-moon")
+--  end,
+--},
   {
       "hrsh7th/nvim-cmp",
 	dependencies = {
@@ -64,7 +69,7 @@ opts = {
 	    ensure_installed = { "c", "lua", "c_sharp", "vim", "vimdoc", "query", "javascript", "typescript"},
 	    auto_install = true,                                                           
 	    highlight = {
-		enable = true
+		enable = true,
 	    },
 	    incremental_selection = {
 	           enable = true,
@@ -133,6 +138,9 @@ opts = {
 	"neovim/nvim-lspconfig"
   },
   {
+	"hrsh7th/nvim-cmp"	
+  },
+  {
     "seblyng/roslyn.nvim",
     ft = "cs",
     ---@module 'roslyn.config'
@@ -140,7 +148,13 @@ opts = {
     opts = {
 	config = 
 	{
-		capabilities = capabilities,
+	    capabilities = {
+		workspace = {
+		    didChangeWatchedFiles = {
+			dynamicRegistration = false,
+		    }
+		}
+	    },
 	},
         -- your configuration comes here; leave empty for default settings
     },
@@ -151,13 +165,15 @@ opts = {
   },
   {
     "apyra/nvim-unity-sync",
+    lazy = false,
     config = function()
       require("unity.plugin").setup({
         -- Configs here (Optional) 
         })
     end,
     ft = "cs",
-  }
+  },
+  
 })
 require("mason").setup({
     registries = {
@@ -168,6 +184,7 @@ require("mason").setup({
 
 vim.lsp.config("roslyn", {
     on_attach = function()
+	--vim.treesitter.stop(bufnr)
         print("This will run when the server attaches!")
     end,
     settings = {
@@ -178,15 +195,22 @@ vim.lsp.config("roslyn", {
         ["csharp|code_lens"] = {
             dotnet_enable_references_code_lens = true,
         },
-		["background_analysis"] ={
-			dotnet_analyzer_diagnostics_scope = "fullSolution",
-			dotnet_compiler_diagnostics_scope = "fullSolution",
-		}
+	["background_analysis"] ={
+		dotnet_analyzer_diagnostics_scope = "fullSolution",
+		dotnet_compiler_diagnostics_scope = "fullSolution",
+	},
+	["csharp|code_style.formatting.indentation_and_spacing"]={
+		tab_width = 4
+	},
+	["text_editor"]={
+	tab_width = 4	
+	},
     },
 	opts={
 		filewatching = "roslyn"
 	}
 })
+vim.lsp.enable('roslyn')
 
 vim.api.nvim_create_autocmd("BufEnter", {
     callback = function()

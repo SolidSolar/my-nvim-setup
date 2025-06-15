@@ -2,14 +2,18 @@
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.opt.number = true
-
+vim.opt.signcolumn = "yes"		
+vim.diagnostic.config { update_in_insert = true }  
 
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+					
+vim.g.editorconfig = false
+vim.expandtab =true 
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.softtabstop = 4
 
-vim.expandtab = true
-vim.tabstop = 2
-vim.opt.shiftwidth = 4
 
 vim.opt.wrap = false
 vim.opt.clipboard = "unnamedplus"
@@ -37,6 +41,7 @@ vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>q", "<Esc>", {remap = false})
 vim.keymap.set("n", "<leader><Left>", "<C-o>", {remap = true})
 vim.keymap.set("n", "<leader><Right>", "<C-i>", {remap = true})
+vim.keymap.set("n", "<leader>c", vim.lsp.buf.code_action, { noremap = true, silent = true, buffer = bufnr })
 
 local cmp = require'cmp'
 
